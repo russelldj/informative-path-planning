@@ -7,18 +7,22 @@ License: MIT
 Maintainers: Genevieve Flaspohler and Victoria Preston
 '''
 
-from IPython.display import display
-import numpy as np
+import logging
 import math
 import os
+
 import GPy as GPy
-from GPy.inference.latent_function_inference import exact_gaussian_inference
-from GPy.util.linalg import pdinv, dpotrs, dpotri, symmetrify, jitchol, dtrtrs, tdot
-from GPy.util import diag
-import logging
+import numpy as np
 import scipy as sp
+from GPy.inference.latent_function_inference import exact_gaussian_inference
+from GPy.util import diag
+from GPy.util.linalg import (dpotri, dpotrs, dtrtrs, jitchol, pdinv,
+                             symmetrify, tdot)
+from IPython.display import display
+
 logger = logging.getLogger('robot')
 import pdb
+
 
 class GPModel(object):
     '''The GPModel class, which is a wrapper on top of GPy.'''     

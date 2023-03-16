@@ -1,8 +1,9 @@
-import rospy
-import rosbag
+import GPy
 import navpy
 import numpy as np
-import GPy
+import rosbag
+import rospy
+
 
 def truncate_by_distance(xvals, dist_lim=250.0):
     dist = 0
