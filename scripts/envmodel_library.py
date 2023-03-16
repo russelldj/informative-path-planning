@@ -105,7 +105,7 @@ class Environment:
             while maxima[0] < ranges[0] or maxima[0] > ranges[1] or \
                   maxima[1] < ranges[2] or maxima[1] > ranges[3] or \
                   self.obstacle_world.in_obstacle(maxima, buff = 0.0):
-                print "Current environment in violation of boundary constraint. Regenerating!"
+                print("Current environment in violation of boundary constraint. Regenerating!")
                 logger.warning("Current environment in violation of boundary constraint. Regenerating!")
 
                 # Intialize a GP model of the environment
@@ -182,7 +182,7 @@ class Environment:
                     #plt.show()           
                     plt.close()
         
-            print "Environment initialized with bounds X1: (", self.x1min, ",", self.x1max, ")  X2:(", self.x2min, ",", self.x2max, ")"
+            print("Environment initialized with bounds X1: (", self.x1min, ",", self.x1max, ")  X2:(", self.x2min, ",", self.x2max, ")")
             logger.info("Environment initialized with bounds X1: ({}, {})  X2: ({}, {})".format(self.x1min, self.x1max, self.x2min, self.x2max)) 
 
     def sample_value(self, xvals):

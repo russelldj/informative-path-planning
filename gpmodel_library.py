@@ -58,7 +58,7 @@ class GPModel(object):
             self.dimension = dimension
             self.asymmetric = True
         else:
-            print dimension
+            print(dimension)
             raise ValueError('Environment must have dimension 2 or 3')
 
         if kernel == 'rbf':
@@ -139,7 +139,7 @@ class GPModel(object):
         
         # Read pre-trained kernel parameters from file, if avaliable and no training data is provided
         if os.path.isfile(kernel_file):
-            print "Loading kernel parameters from file"
+            print("Loading kernel parameters from file")
             logger.info("Loading kernel parameters from file")
             self.kern[:] = np.load(kernel_file)
         else:
@@ -162,7 +162,7 @@ class GPModel(object):
             xvals = self.xvals
             zvals = self.zvals
 
-            print "Optimizing kernel parameters given data"
+            print("Optimizing kernel parameters given data")
             logger.info("Optimizing kernel parameters given data")
             # Initilaize a GP model (used only for optmizing kernel hyperparamters)
             self.m = GPy.models.GPRegression(np.array(xvals), np.array(zvals), self.kern)
@@ -649,8 +649,8 @@ class SpatialGPModel(GPModel):
                 # print "default method:"
                 # print variance 
                 
-                print np.sum(mu - mean)
-                print np.sum(var - variance)
+                print(np.sum(mu - mean))
+                print(np.sum(var - variance))
 
         return mu, var
     
@@ -716,22 +716,22 @@ class SubsampledGPModel(OnlineGPModel):
         else:
             # Find nearest neightbor within radius
             dist, index = self.spatial_tree.query(xvals, k = 1, distance_upper_bound = self.neighbor_radius)
-            print "Distance to nearest neighbor:", dist
-            print "Index:", index
-            print "Dataset:", self.xvals.shape
+            print("Distance to nearest neighbor:", dist)
+            print("Index:", index)
+            print("Dataset:", self.xvals.shape)
 
             for j, (d, i) in enumerate(zip(dist, index)):
                 m, v = self.predict_value(xvals, include_noise = True, full_cov = False)
-                print "Value distance:", np.abs(self.zvals[i, :] - m[j, :])
+                print("Value distance:", np.abs(self.zvals[i, :] - m[j, :]))
                 if d == float("inf") or np.abs(self.zvals[i, :] - m[j, :]) > self.val_eps:
-                    print "Udating model with point:", d, self.xvals[i], "and values:", self.zvals[i, :], m[j, :]
+                    print("Udating model with point:", d, self.xvals[i], "and values:", self.zvals[i, :], m[j, :])
                     self.update_model(xvals, zvals)
                     return
-            print "---------- Skiped Update! -------------------"
+            print("---------- Skiped Update! -------------------")
 
     @property
     def spatial_tree(self):
         if self._spatial_tree is None:
-            print "Rebuilding KD tree"
+            print("Rebuilding KD tree")
             self._spatial_tree = sp.spatial.KDTree(self.xvals, leafsize = 5)
         return self._spatial_tree

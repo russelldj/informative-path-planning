@@ -155,7 +155,7 @@ class GPModel:
         
         # Read pre-trained kernel parameters from file, if avaliable and no training data is provided
         if os.path.isfile(kernel_file):
-            print "Loading kernel parameters from file"
+            print("Loading kernel parameters from file")
             logger.info("Loading kernel parameters from file")
             self.kern[:] = np.load(kernel_file)
         else:
@@ -189,7 +189,7 @@ class GPModel:
             xvals = self.xvals[::5]
             zvals = self.zvals[::5]
 
-            print "Optimizing kernel parameters given data"
+            print("Optimizing kernel parameters given data")
             logger.info("Optimizing kernel parameters given data")
             # Initilaize a GP model (used only for optmizing kernel hyperparamters)
             self.m = GPy.models.GPRegression(np.array(xvals), np.array(zvals), self.kern)
@@ -287,7 +287,7 @@ class Environment:
             # lives within the boundary constraints
             while maxima[0] < ranges[0] or maxima[0] > ranges[1] or \
                   maxima[1] < ranges[2] or maxima[1] > ranges[3]:
-                print "Current environment in violation of boundary constraint. Regenerating!"
+                print("Current environment in violation of boundary constraint. Regenerating!")
                 logger.warning("Current environment in violation of boundary constraint. Regenerating!")
 
                 # Intialize a GP model of the environment
@@ -353,7 +353,7 @@ class Environment:
                     #plt.show()           
                     plt.close()
         
-            print "Environment initialized with bounds X1: (", self.x1min, ",", self.x1max, ")  X2:(", self.x2min, ",", self.x2max, ")"
+            print("Environment initialized with bounds X1: (", self.x1min, ",", self.x1max, ")  X2:(", self.x2min, ",", self.x2max, ")")
             logger.info("Environment initialized with bounds X1: ({}, {})  X2: ({}, {})".format(self.x1min, self.x1max, self.x2min, self.x2max)) 
 
     def sample_value(self, xvals):
@@ -509,7 +509,7 @@ class Dubins_Path_Generator(Path_Generator):
         coords = self.buffered_paths()
         
         if len(coords) == 0:
-            print 'no viable path'
+            print('no viable path')
             
         self.samples = coords
         return coords
@@ -532,13 +532,13 @@ class Dubins_EqualPath_Generator(Path_Generator):
         
         # find the "shortest" path in sample space
         current_min = 1000
-        for key,path in coords.items():
+        for key,path in list(coords.items()):
             if len(path) < current_min and len(path) > 1:
                 current_min = len(path)
         
         # limit all paths to the shortest path in sample space
         # NOTE! for edge cases nar borders, this limits the paths significantly
-        for key,path in coords.items():
+        for key,path in list(coords.items()):
             if len(path) > current_min:
                 path = path[0:current_min]
                 coords[key]=path
@@ -606,7 +606,7 @@ class MCTS:
 
         # get the best action to take with most promising futures
         best_sequence, best_val, all_vals = self.get_best_child()
-        print "Number of rollouts:", i, "\t Size of tree:", len(self.tree)
+        print("Number of rollouts:", i, "\t Size of tree:", len(self.tree))
         logger.info("Number of rollouts: {} \t Size of tree: {}".format(i, len(self.tree)))
 
         paths = self.path_generator.get_path_set(self.cp)                
@@ -621,7 +621,7 @@ class MCTS:
         # root of the tree is current location of the vehicle
         tree['root'] = (self.cp, 0) #(pose, number of queries)
         actions = self.path_generator.get_path_set(self.cp)
-        for action, samples in actions.items():
+        for action, samples in list(actions.items()):
             cost = np.sqrt((self.cp[0]-samples[-1][0])**2 + (self.cp[1]-samples[-1][1])**2)
             tree['child '+ str(action)] = (samples, cost, 0, 0) #(samples, cost, reward, number of times queried)
         return tree
@@ -637,7 +637,7 @@ class MCTS:
         leaf_eval = {}
         # TODO: check initialization, when everything is zero. appears to be throwing error
         actions = self.path_generator.get_path_set(self.cp)
-        for i, val in actions.items():
+        for i, val in list(actions.items()):
             try:
                 node = 'child '+ str(i)
                 leaf_eval[node] = self.tree[node][2] + 0.1*np.sqrt(2*(np.log(self.tree['root'][1]))/self.tree[node][3])
@@ -655,10 +655,10 @@ class MCTS:
 
         sequence = [node] #include the child node
         #TODO use the cost metric to signal action termination, for now using horizon
-        for i in xrange(self.rl):
+        for i in range(self.rl):
             actions = self.path_generator.get_path_set(self.tree[node][0][-1]) #plan from the last point in the sample
             if len(actions) == 0:
-                print 'No actions were viably generated'
+                print('No actions were viably generated')
             try:
                 
                 try:
@@ -667,7 +667,7 @@ class MCTS:
                     if len(actions) != 0:
                         a = 0
 
-                keys = actions.keys()
+                keys = list(actions.keys())
                 # print keys
                 if len(keys) <= 1:
                     #print 'few paths available!'
@@ -677,12 +677,12 @@ class MCTS:
                 node = node + ' child ' + str(keys[a])
                 sequence.append(node)
             except:
-                print 'rolling back'
+                print('rolling back')
                 sequence.remove(node)
                 try:
                     node = sequence[-1]
                 except:
-                    print "Empty sequence", sequence, node
+                    print("Empty sequence", sequence, node)
                     logger.warning('Bad sequence')
         return sequence
 
@@ -731,7 +731,7 @@ class MCTS:
         best = -float('inf')
         best_child = None
         value = {}
-        for i in xrange(self.fs):
+        for i in range(self.fs):
             try:
                 r = self.tree['child '+ str(i)][2]
                 value[i] = r
@@ -848,7 +848,7 @@ class Robot(object):
             
         paths = self.path_generator.get_path_set(self.loc)
 
-        for path, points in paths.items():
+        for path, points in list(paths.items()):
             if self.f_rew == 'mes' or self.f_rew == 'maxs-mes':
                 param = (self.max_val, self.max_locs, self.target)
             elif self.f_rew == 'exp_improve':
@@ -898,16 +898,16 @@ class Robot(object):
             T (int > 0): the length of the planning horization (number of planning iterations)'''
         self.trajectory = []
         
-        for t in xrange(T):
+        for t in range(T):
             # Select the best trajectory according to the robot's aquisition function
-            print "[", t, "] Current Location:  ", self.loc
+            print("[", t, "] Current Location:  ", self.loc)
             logger.info("[{}] Current Location: {}".format(t, self.loc))
             best_path, best_val, all_paths, all_values, max_locs = self.choose_trajectory(t = t)
             
             # Given this choice, update the evaluation metrics 
             # TODO: fix this
             pred_loc, pred_val = self.predict_max()
-            print "Current predicted max and value: \t", pred_loc, "\t", pred_val
+            print("Current predicted max and value: \t", pred_loc, "\t", pred_val)
             logger.info("Current predicted max and value: {} \t {}".format(pred_loc, pred_val))
 
             try:
@@ -983,13 +983,13 @@ class Robot(object):
         # If available, plot the current set of options available to robot, colored
         # by their value (red: low, yellow: high)
         if all_paths is not None:
-            all_vals = [x for x in all_vals.values()]   
+            all_vals = [x for x in list(all_vals.values())]   
             path_color = iter(plt.cm.autumn(np.linspace(0, max(all_vals),len(all_vals))/ max(all_vals)))        
             path_order = np.argsort(all_vals)
             
             for index in path_order:
                 c = next(path_color)                
-                points = all_paths[all_paths.keys()[index]]
+                points = all_paths[list(all_paths.keys())[index]]
                 f = np.array(points)
                 plt.plot(f[:,0], f[:,1], c = c, marker='.')
                
@@ -1081,8 +1081,8 @@ class Nonmyopic_Robot(Robot):
         '''
         self.trajectory = []
                  
-        for t in xrange(T):
-            print "[", t, "] Current Location:  ", self.loc            
+        for t in range(T):
+            print("[", t, "] Current Location:  ", self.loc)            
             logger.info("[{}] Current Location: {}".format(t, self.loc))
 
             if self.f_rew == "exp_improve":
@@ -1108,7 +1108,7 @@ class Nonmyopic_Robot(Robot):
             all_paths = self.path_generator.get_path_set(self.loc)
             
             pred_loc, pred_val = self.predict_max()
-            print "Current predicted max and value: \t", pred_loc, "\t", pred_val
+            print("Current predicted max and value: \t", pred_loc, "\t", pred_val)
             logger.info("Current predicted max and value: {} \t {}".format(pred_loc, pred_val))
 
             try:
@@ -1144,7 +1144,7 @@ class Evaluation:
         self.max_loc = world.GP.xvals[np.argmax(world.GP.zvals), :]
         self.reward_function = reward_function
 
-        print "World max value", self.max_val, "at location", self.max_loc
+        print("World max value", self.max_val, "at location", self.max_loc)
         logger.info("World max value {} at location {}".format(self.max_val, self.max_loc))
         
         self.metrics = {'aquisition_function': {},
@@ -1236,7 +1236,7 @@ class Evaluation:
         '''
 
         value_omni = {}        
-        for path, points in all_paths.items():           
+        for path, points in list(all_paths.items()):           
             if param is None:
                 value_omni[path] =  self.f_rew(time = t, xvals = points, robot_model = robot_model)  
             else:
@@ -1350,36 +1350,36 @@ class Evaluation:
     def plot_metrics(self):
         ''' Plots the performance metrics computed over the course of a info'''
         # Asumme that all metrics have the same time as MSE; not necessary
-        time = np.array(self.metrics['MSE'].keys())
+        time = np.array(list(self.metrics['MSE'].keys()))
         
         ''' Metrics that require a ground truth global model to compute'''        
-        info_gain = np.cumsum(np.array(self.metrics['info_gain_reward'].values()))        
-        aqu_fun = np.cumsum(np.array(self.metrics['aquisition_function'].values()))
-        MSE = np.array(self.metrics['MSE'].values())
-        hotspot_error = np.array(self.metrics['hotspot_error'].values())
+        info_gain = np.cumsum(np.array(list(self.metrics['info_gain_reward'].values())))        
+        aqu_fun = np.cumsum(np.array(list(self.metrics['aquisition_function'].values())))
+        MSE = np.array(list(self.metrics['MSE'].values()))
+        hotspot_error = np.array(list(self.metrics['hotspot_error'].values()))
         
-        regret = np.cumsum(np.array(self.metrics['instant_regret'].values()))
-        info_regret = np.cumsum(np.array(self.metrics['max_val_regret'].values()))
+        regret = np.cumsum(np.array(list(self.metrics['instant_regret'].values())))
+        info_regret = np.cumsum(np.array(list(self.metrics['max_val_regret'].values())))
 
-        max_loc_error = np.array(self.metrics['max_loc_error'].values())
-        max_val_error = np.array(self.metrics['max_val_error'].values())
-        simple_regret = np.array(self.metrics['simple_regret'].values())
+        max_loc_error = np.array(list(self.metrics['max_loc_error'].values()))
+        max_val_error = np.array(list(self.metrics['max_val_error'].values()))
+        simple_regret = np.array(list(self.metrics['simple_regret'].values()))
 
-        sample_regret_loc = np.array(self.metrics['sample_regret_loc'].values())
-        sample_regret_val = np.array(self.metrics['sample_regret_val'].values())
+        sample_regret_loc = np.array(list(self.metrics['sample_regret_loc'].values()))
+        sample_regret_val = np.array(list(self.metrics['sample_regret_val'].values()))
 
-        current_highest_obs = np.array(self.metrics['current_highest_obs'].values())
-        current_highest_obs_loc_x = np.array(self.metrics['current_highest_obs_loc_x'].values())
-        current_highest_obs_loc_y = np.array(self.metrics['current_highest_obs_loc_y'].values())
-        robot_location_x = np.array(self.metrics['robot_location_x'].values())
-        robot_location_y = np.array(self.metrics['robot_location_y'].values())
-        robot_location_a = np.array(self.metrics['robot_location_a'].values())
-        star_obs_0 = np.array(self.metrics['star_obs_0'].values())
-        star_obs_1 = np.array(self.metrics['star_obs_1'].values())
-        star_obs_loc_x_0 = np.array(self.metrics['star_obs_loc_x_0'].values())
-        star_obs_loc_x_1 = np.array(self.metrics['star_obs_loc_x_1'].values())
-        star_obs_loc_y_0 = np.array(self.metrics['star_obs_loc_y_0'].values())
-        star_obs_loc_y_1 = np.array(self.metrics['star_obs_loc_y_1'].values())
+        current_highest_obs = np.array(list(self.metrics['current_highest_obs'].values()))
+        current_highest_obs_loc_x = np.array(list(self.metrics['current_highest_obs_loc_x'].values()))
+        current_highest_obs_loc_y = np.array(list(self.metrics['current_highest_obs_loc_y'].values()))
+        robot_location_x = np.array(list(self.metrics['robot_location_x'].values()))
+        robot_location_y = np.array(list(self.metrics['robot_location_y'].values()))
+        robot_location_a = np.array(list(self.metrics['robot_location_a'].values()))
+        star_obs_0 = np.array(list(self.metrics['star_obs_0'].values()))
+        star_obs_1 = np.array(list(self.metrics['star_obs_1'].values()))
+        star_obs_loc_x_0 = np.array(list(self.metrics['star_obs_loc_x_0'].values()))
+        star_obs_loc_x_1 = np.array(list(self.metrics['star_obs_loc_x_1'].values()))
+        star_obs_loc_y_0 = np.array(list(self.metrics['star_obs_loc_y_0'].values()))
+        star_obs_loc_y_1 = np.array(list(self.metrics['star_obs_loc_y_1'].values()))
         # star_obs_loc = np.array(self.metrics['star_obs_loc'].values())
 
         #mean = np.cumsum(np.array(self.metrics['mean_reward'].values()))
@@ -1577,8 +1577,8 @@ def sample_max_vals(robot_model, t, nK = 3, nFeatures = 300, visualize = True):
     funcs = []
     delete_locs = []
 
-    for i in xrange(nK):
-        print "Starting global optimization", i, "of", nK
+    for i in range(nK):
+        print("Starting global optimization", i, "of", nK)
         logger.info("Starting global optimization {} of {}".format(i, nK))
         # Draw the weights for the random features
         # TODO: make sure this formula is correct
@@ -1605,7 +1605,7 @@ def sample_max_vals(robot_model, t, nK = 3, nFeatures = 300, visualize = True):
                 theta = noise - np.dot(Z, np.dot(U, R*(np.dot(U.T, np.dot(Z.T, noise))))) + mu
             except:
                 # If Sigma is not positive definite, ignore this simulation
-                print "[ERROR]: Sigma is not positive definite, ignoring simulation", i
+                print("[ERROR]: Sigma is not positive definite, ignoring simulation", i)
                 logger.warning("[ERROR]: Sigma is not positive definite, ignoring simulation {}".format(i))
                 delete_locs.append(i)
                 continue
@@ -1618,7 +1618,7 @@ def sample_max_vals(robot_model, t, nK = 3, nFeatures = 300, visualize = True):
                 theta = mu + np.dot(np.linalg.cholesky(Sigma), noise)            
             except:
                 # If Sigma is not positive definite, ignore this simulation
-                print "[ERROR]: Sigma is not positive definite, ignoring simulation", i
+                print("[ERROR]: Sigma is not positive definite, ignoring simulation", i)
                 logger.warning("[ERROR]: Sigma is not positive definite, ignoring simulation {}".format(i))
                 delete_locs.append(i)
                 continue
@@ -1652,7 +1652,7 @@ def sample_max_vals(robot_model, t, nK = 3, nFeatures = 300, visualize = True):
         
         samples[i] = max_val
         funcs.append(target)
-        print "Max Value in Optimization \t \t", samples[i]
+        print("Max Value in Optimization \t \t", samples[i])
         logger.info("Max Value in Optimization \t {}".format(samples[i]))
         locs[i, :] = maxima
         
@@ -1661,7 +1661,7 @@ def sample_max_vals(robot_model, t, nK = 3, nFeatures = 300, visualize = True):
         #    maxima[1] == robot_model.ranges[2] or maxima[1] == robot_model.ranges[3]:
         if max_val < np.max(robot_model.zvals) + 5.0 * np.sqrt(robot_model.noise):
             samples[i] = np.max(robot_model.zvals) + 5.0 * np.sqrt(robot_model.noise)
-            print "Max observed is bigger than max in opt:", samples[i]
+            print("Max observed is bigger than max in opt:", samples[i])
             logger.info("Max observed is bigger than max in opt: {}".format(samples[i]))
             locs[i, :] = robot_model.xvals[np.argmax(robot_model.zvals)]
 
@@ -1693,7 +1693,7 @@ def mves_maximal_set(time, xvals, robot_model, param):
 
     # Initialize f, g
     f = 0
-    for i in xrange(max_vals.shape[0]):
+    for i in range(max_vals.shape[0]):
         # Compute the posterior mean/variance predictions and gradients.
         #mean, var = robot_model.predict_value(queries)
      
@@ -1757,7 +1757,7 @@ def mves_maximal_set2(time, xvals, robot_model, param):
 
     # Initialize f, g
     f = 0
-    for i in xrange(max_vals.shape[0]):
+    for i in range(max_vals.shape[0]):
         # Compute the posterior mean/variance predictions and gradients.
         #mean, var = robot_model.predict_value(queries)
         mean, var = robot_model.predict_value(queries)
@@ -1801,7 +1801,7 @@ def mves(time, xvals, robot_model, param):
 
     # Initialize f, g
     f = 0
-    for i in xrange(maxes.shape[0]):
+    for i in range(maxes.shape[0]):
         # Compute the posterior mean/variance predictions and gradients.
         #[meanVector, varVector, meangrad, vargrad] = mean_var(x, xx, ...
         #    yy, KernelMatrixInv{i}, l(i,:), sigma(i), sigma0(i));
@@ -1912,7 +1912,7 @@ def global_maximization(target, target_vector_n, target_grad, target_vector_grad
             jac = target_vector_gradient_n, bounds = ((ranges[0], ranges[1]), (ranges[2], ranges[3])))
 
     if res['success'] == False:
-        print "Failed to converge!"
+        print("Failed to converge!")
         #print res
 
         logger.warning("Failed to converge! \n")

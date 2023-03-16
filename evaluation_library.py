@@ -44,7 +44,7 @@ class Evaluation:
         self.reward_function = reward_function
         self.num_stars = num_stars
 
-        print "World max value", self.max_val, "at location", self.max_loc
+        print("World max value", self.max_val, "at location", self.max_loc)
         logger.info("World max value {} at location {}".format(self.max_val, self.max_loc))
         
         self.metrics = {'aquisition_function': {},
@@ -160,7 +160,7 @@ class Evaluation:
         '''
 
         value_omni = {}        
-        for path, points in all_paths.items():           
+        for path, points in list(all_paths.items()):           
             if param is None:
                 value_omni[path] =  self.f_rew(time = t, xvals = points, robot_model = robot_model)  
             else:
@@ -313,43 +313,43 @@ class Evaluation:
     def plot_metrics(self):
         ''' Plots the performance metrics computed over the course of a info'''
         # Asumme that all metrics have the same time as MSE; not necessary
-        time = np.array(self.metrics['MSE'].keys())
+        time = np.array(list(self.metrics['MSE'].keys()))
         
         ''' Metrics that require a ground truth global model to compute'''        
-        info_gain = np.cumsum(np.array(self.metrics['info_gain_reward'].values()))        
-        aqu_fun = np.cumsum(np.array(self.metrics['aquisition_function'].values()))
-        MSE = np.array(self.metrics['MSE'].values())
-        hotspot_error = np.array(self.metrics['hotspot_error'].values())
+        info_gain = np.cumsum(np.array(list(self.metrics['info_gain_reward'].values())))        
+        aqu_fun = np.cumsum(np.array(list(self.metrics['aquisition_function'].values())))
+        MSE = np.array(list(self.metrics['MSE'].values()))
+        hotspot_error = np.array(list(self.metrics['hotspot_error'].values()))
         
-        regret = np.cumsum(np.array(self.metrics['instant_regret'].values()))
-        info_regret = np.cumsum(np.array(self.metrics['max_val_regret'].values()))
-        mes_reward_robot = np.cumsum(np.array(self.metrics['mes_reward_robot'].values()))
-        mes_reward_omni = np.cumsum(np.array(self.metrics['mes_reward_omni'].values()))
+        regret = np.cumsum(np.array(list(self.metrics['instant_regret'].values())))
+        info_regret = np.cumsum(np.array(list(self.metrics['max_val_regret'].values())))
+        mes_reward_robot = np.cumsum(np.array(list(self.metrics['mes_reward_robot'].values())))
+        mes_reward_omni = np.cumsum(np.array(list(self.metrics['mes_reward_omni'].values())))
 
-        max_loc_error = np.array(self.metrics['max_loc_error'].values())
-        max_val_error = np.array(self.metrics['max_val_error'].values())
-        simple_regret = np.array(self.metrics['simple_regret'].values())
+        max_loc_error = np.array(list(self.metrics['max_loc_error'].values()))
+        max_val_error = np.array(list(self.metrics['max_val_error'].values()))
+        simple_regret = np.array(list(self.metrics['simple_regret'].values()))
 
-        sample_regret_loc = np.array(self.metrics['sample_regret_loc'].values())
-        sample_regret_val = np.array(self.metrics['sample_regret_val'].values())
+        sample_regret_loc = np.array(list(self.metrics['sample_regret_loc'].values()))
+        sample_regret_val = np.array(list(self.metrics['sample_regret_val'].values()))
 
-        current_highest_obs = np.array(self.metrics['current_highest_obs'].values())
-        current_highest_obs_loc_x = np.array(self.metrics['current_highest_obs_loc_x'].values())
-        current_highest_obs_loc_y = np.array(self.metrics['current_highest_obs_loc_y'].values())
-        robot_location_x = np.array(self.metrics['robot_location_x'].values())
-        robot_location_y = np.array(self.metrics['robot_location_y'].values())
-        robot_location_a = np.array(self.metrics['robot_location_a'].values())
+        current_highest_obs = np.array(list(self.metrics['current_highest_obs'].values()))
+        current_highest_obs_loc_x = np.array(list(self.metrics['current_highest_obs_loc_x'].values()))
+        current_highest_obs_loc_y = np.array(list(self.metrics['current_highest_obs_loc_y'].values()))
+        robot_location_x = np.array(list(self.metrics['robot_location_x'].values()))
+        robot_location_y = np.array(list(self.metrics['robot_location_y'].values()))
+        robot_location_a = np.array(list(self.metrics['robot_location_a'].values()))
         
         star_obs = []
         star_obs_loc_x = []
         star_obs_loc_y = []
 
         for i in range(0,self.num_stars):
-            star_obs.append(np.array(self.metrics['star_obs_'+str(i)].values()))
-            star_obs_loc_x.append(np.array(self.metrics['star_obs_loc_x_'+str(i)].values()))
-            star_obs_loc_y.append(np.array(self.metrics['star_obs_loc_y_'+str(i)].values()))
+            star_obs.append(np.array(list(self.metrics['star_obs_'+str(i)].values())))
+            star_obs_loc_x.append(np.array(list(self.metrics['star_obs_loc_x_'+str(i)].values())))
+            star_obs_loc_y.append(np.array(list(self.metrics['star_obs_loc_y_'+str(i)].values())))
 
-        distance = np.array(self.metrics['distance_traveled'].values())
+        distance = np.array(list(self.metrics['distance_traveled'].values()))
         # star_obs_loc = np.array(self.metrics['star_obs_loc'].values())
 
         #mean = np.cumsum(np.array(self.metrics['mean_reward'].values()))

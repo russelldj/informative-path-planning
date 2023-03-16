@@ -52,7 +52,7 @@ RANGE = np.array([(0, 50), (0, 50)])
 # fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(16, 8))
 
 for i, (label, max_file, samp_file) in enumerate(zip(labels, maxima_files, sample_files)):
-    print "Analyzing", label
+    print("Analyzing", label)
     sampled_maxes = np.loadtxt(samp_file).T
     true_maxes = np.loadtxt(max_file).T
 
@@ -65,7 +65,7 @@ for i, (label, max_file, samp_file) in enumerate(zip(labels, maxima_files, sampl
     dist_loc = distance.cdist(max_locs, true_loc, 'euclidean')
     dist_val = distance.cdist(max_vals, true_val, 'euclidean')
 
-    print "Distance mean location:", np.mean(dist_loc), "\t Value:", np.mean(dist_val)
+    print("Distance mean location:", np.mean(dist_loc), "\t Value:", np.mean(dist_val))
 
     plt.figure(figsize=(8,8))
     plt.hist2d(max_locs[:, 0], max_locs[:, 1], bins = NBINS, normed = True, range = RANGE, cmap = 'magma', norm=mcolors.LogNorm())
@@ -79,16 +79,16 @@ for i, (label, max_file, samp_file) in enumerate(zip(labels, maxima_files, sampl
     
     hist, xbins, ybins, _ = plt.hist2d(max_locs[:, 0], max_locs[:, 1], bins = NBINS, normed = True, range = RANGE)
     entropy_x = -np.mean(np.log(hist[hist > 0.0]))
-    print "Entropy of star x-value distribution:", entropy_x
+    print("Entropy of star x-value distribution:", entropy_x)
 
     hist_z, xbins_z, _ = plt.hist(max_vals, bins = NBINS, density = True)
     entropy_z = -np.mean(np.log(hist_z[hist_z > 0.0]))
-    print "Entropy of star z-value distribution:", entropy_z
+    print("Entropy of star z-value distribution:", entropy_z)
 
     # Uniform santiy check
     uniform = np.ones(hist.shape) / np.sum(np.ones(hist.shape))
     unifrom_entropy = -np.mean(np.log(uniform[uniform > 0.0]))
-    print "Entropy of a uniform distribution:", unifrom_entropy
+    print("Entropy of a uniform distribution:", unifrom_entropy)
 
     # axes[i].set_title(label)
     # axes[i].hist2d(max_locs[:, 0], max_locs[:, 1], bins = NBINS)

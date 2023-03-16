@@ -65,7 +65,7 @@ def predict_max(GP):
 def star_max_dist(GP, true_loc, true_val):
     # If no observations have been collected, return default value
     if GP.xvals is None: #TODO: remember to change this
-        print "Skipping star analysis prediction!"
+        print("Skipping star analysis prediction!")
         return 0.0, 0.0, 0.0, 0.0
 
     max_vals, max_locs, func = aqlib.sample_max_vals(GP, t = 0, nK = 20)
@@ -115,7 +115,7 @@ def star_max_dist(GP, true_loc, true_val):
     return np.mean(dist_loc), np.mean(dist_val), entropy_x, entropy_z
 
 
-print "User specified options: SEED, REWARD_FUNCTION, PATHSET, USE_COST, NONMYOPIC, GOAL_ONLY, TREE_TYPE, RUN_REAL"
+print("User specified options: SEED, REWARD_FUNCTION, PATHSET, USE_COST, NONMYOPIC, GOAL_ONLY, TREE_TYPE, RUN_REAL")
 # Allow selection of seed world to be consistent, and to run through reward functions
 SEED =  int(sys.argv[1])
 # SEED = 0 
@@ -169,7 +169,7 @@ if RUN_REAL_EXP:
     seed_bag = '/home/genevieve/mit-whoi/barbados/rosbag_16Jan_slicklizard/slicklizard_2019-01-17-03-01-44.bag'
     xobs, zobs = baglib.read_bagfile(seed_bag, 1)
     trunc_index = baglib.truncate_by_distance(xobs, dist_lim = 1000.0)
-    print "PLUMES trunc:", trunc_index
+    print("PLUMES trunc:", trunc_index)
     xobs = xobs[0:trunc_index, :]
     zobs = zobs[0:trunc_index, :]
 
@@ -185,7 +185,7 @@ if RUN_REAL_EXP:
     seed_bag = '/home/genevieve/mit-whoi/barbados/rosbag_16Jan_slicklizard/slicklizard_2019-01-16-16-12-40.bag'
     xobs, zobs = baglib.read_bagfile(seed_bag, 1)
     trunc_index = baglib.truncate_by_distance(xobs, dist_lim = 1000.0)
-    print "Lawnmower trunc:", trunc_index
+    print("Lawnmower trunc:", trunc_index)
     xobs = xobs[0:trunc_index, :]
     zobs = zobs[0:trunc_index, :]
 
@@ -241,7 +241,7 @@ data = np.vstack([x1observe.ravel(), x2observe.ravel()]).T
 observations = world.sample_value(data)
 '''
 
-print "Creating robot!"
+print("Creating robot!")
 # Create the point robot
 robot = roblib.Robot(sample_world = world.sample_value, #function handle for collecting observations
                      start_loc = (5.0, 5.0, 0.0), #where robot is instantiated
@@ -278,11 +278,11 @@ robot = roblib.Robot(sample_world = world.sample_value, #function handle for col
                      obstacle_world = ow, 
                      tree_type = TREE_TYPE) 
 
-print "Done creating robot!"
+print("Done creating robot!")
 
 
 if RUN_REAL_EXP:
-    print "Evaluating!"
+    print("Evaluating!")
 
     true_val = np.array(world.max_val).reshape((-1, 1))
     true_loc = np.array(world.max_loc).reshape((-1, 2))
@@ -291,24 +291,24 @@ if RUN_REAL_EXP:
     loc_guess, val_guess = predict_max(robot.GP)
     err_x = np.linalg.norm(loc_guess - true_loc)
     err_z = np.linalg.norm(val_guess - true_val)
-    print "Estimation error in x, z:", err_x, err_z
+    print("Estimation error in x, z:", err_x, err_z)
 
     ''' Compute entropy of star samples '''
     dist_err, val_err, h_x, h_z = star_max_dist(robot.GP, true_loc, true_val)
-    print "Star estimation error in x, z:", dist_err, val_err
-    print "Star entropy error in x, z:", h_x, h_z 
+    print("Star estimation error in x, z:", dist_err, val_err)
+    print("Star entropy error in x, z:", h_x, h_z) 
 
 
     ''' Compute proportions of data witihin delta-epsilon regions '''
     samp_dist_loc = distance.cdist(robot.GP.xvals, true_loc, 'euclidean')
     samp_dist_val = distance.cdist(robot.GP.zvals, true_val, 'euclidean')
     pdb.set_trace()
-    print samp_dist_loc[samp_dist_loc < 10.0]
-    print samp_dist_val[samp_dist_val < 0.5]
+    print(samp_dist_loc[samp_dist_loc < 10.0])
+    print(samp_dist_val[samp_dist_val < 0.5])
 
     prop_x = float(len(samp_dist_loc[samp_dist_loc < 10.])) / float(len(samp_dist_loc))
     prop_z = float(len(samp_dist_val[samp_dist_val < 0.5])) / float(len(samp_dist_val))
-    print "Proportion in x, z:", prop_x, prop_z
+    print("Proportion in x, z:", prop_x, prop_z)
 
 
     max_vals, max_locs, func = aqlib.sample_max_vals(robot.GP, t = 0, nK = 20, obstacles = ow)
@@ -322,7 +322,7 @@ if RUN_REAL_EXP:
     np.savetxt('./true_maxes.csv', np.vstack((true_loc.T, true_val.T)))
 
 
-    print "Distance mean location:", np.mean(dist_loc), "\t Value:", np.mean(dist_val)
+    print("Distance mean location:", np.mean(dist_loc), "\t Value:", np.mean(dist_val))
 
     loc_kernel = sp.stats.gaussian_kde(max_locs.T)
     loc_kernel.set_bandwidth(bw_method=LEN)
@@ -330,8 +330,8 @@ if RUN_REAL_EXP:
     density_loc = loc_kernel(max_locs.T)
     density_loc = density_loc / np.sum(density_loc)
     entropy_loc = -np.mean(np.log(density_loc))
-    print density_loc
-    print "Entropy of star location:", entropy_loc
+    print(density_loc)
+    print("Entropy of star location:", entropy_loc)
 
     val_kernel = sp.stats.gaussian_kde(max_vals.T)
     val_kernel.set_bandwidth(bw_method='silverman')
@@ -339,7 +339,7 @@ if RUN_REAL_EXP:
     density_val = val_kernel(max_vals.T)
     density_val = density_val / np.sum(density_val)
     entropy_val = -np.mean(np.log(density_val))
-    print "Entropy of star value:", entropy_val
+    print("Entropy of star value:", entropy_val)
 
 else:
     robot.planner(T = 150)

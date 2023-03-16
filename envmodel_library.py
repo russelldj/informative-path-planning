@@ -77,12 +77,12 @@ class Environment:
                 x1vals = np.arange(ranges[0], ranges[1], (ranges[1] - ranges[0]) / NUM_PTS)
                 x2vals = np.arange(ranges[2], ranges[3], (ranges[3] - ranges[2]) / NUM_PTS)
 
-                print self.GP.xvals
+                print(self.GP.xvals)
                 
                 x1, x2 = np.meshgrid(x1vals, x2vals) # dimension: NUM_PTS x NUM_PTS       
-                print x1.shape, x2.shape
-                print x1
-                print x2
+                print(x1.shape, x2.shape)
+                print(x1)
+                print(x2)
                 data = np.vstack([x1.ravel(), x2.ravel()]).T
                 observations, var = self.GP.predict_value(data, include_noise = False)        
 
@@ -110,11 +110,11 @@ class Environment:
                 # print "Maxima at:", self.GP.xvals[maxind, 0], self.GP.xvals[maxind,1]
                 # ax2.scatter(self.GP.xvals[maxind, 0], self.GP.xvals[maxind,1], color = 'k', marker = '*', s = 500)
 
-                print "Maxima at:", data[maxind, 0], data[maxind,1]
+                print("Maxima at:", data[maxind, 0], data[maxind,1])
                 ax2.scatter(data[maxind, 0], data[maxind,1], color = 'k', marker = '*', s = 500)
 
                 # scatter = ax2.scatter(self.GP.xvals[:, 0], self.GP.xvals[:, 1], c = self.GP.zvals.ravel(), s = 4.0, cmap = 'viridis')
-                print "Maxima at:", self.GP.xvals[maxind, 0], self.GP.xvals[maxind,1]
+                print("Maxima at:", self.GP.xvals[maxind, 0], self.GP.xvals[maxind,1])
                 ax2.scatter(self.GP.xvals[maxind, 0], self.GP.xvals[maxind,1], color = 'k', marker = '*', s = 500)
                 # fig2.colorbar(plot, ax=ax2)
 
@@ -141,8 +141,8 @@ class Environment:
             if self.time_duration is None:
                 self.time_duration = 1;
 
-            for T in xrange(self.time_duration):
-                print "Generating environment for time", T
+            for T in range(self.time_duration):
+                print("Generating environment for time", T)
                 logger.warning("Generating environemnt for time %d", T)
                 # Initialize maxima arbitrarily to violate boundary constraints
                 maxima = [self.x1min, self.x2min]
@@ -153,7 +153,7 @@ class Environment:
                     maxima[1] < ranges[2] or maxima[1] > ranges[3] or \
                     self.obstacle_world.in_obstacle(maxima, buff = 0.0):
 
-                    print "Current environment in violation of boundary constraint. Regenerating!"
+                    print("Current environment in violation of boundary constraint. Regenerating!")
                     logger.warning("Current environment in violation of boundary constraint. Regenerating!")
 
                     # Intialize a GP model of the environment
@@ -235,7 +235,7 @@ class Environment:
             self.max_val = self.GP.zvals[maxind, :]
             self.max_loc = self.GP.xvals[maxind, :]
 
-            print "Environment initialized with bounds X1: (", self.x1min, ",", self.x1max, ")  X2:(", self.x2min, ",", self.x2max, ")"
+            print("Environment initialized with bounds X1: (", self.x1min, ",", self.x1max, ")  X2:(", self.x2min, ",", self.x2max, ")")
             logger.info("Environment initialized with bounds X1: ({}, {})  X2: ({}, {})".format(self.x1min, self.x1max, self.x2min, self.x2max)) 
 
     def sample_value(self, xvals, time = None):

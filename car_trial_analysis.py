@@ -74,12 +74,12 @@ if __name__ == '__main__':
         max_val = []
         max_loc = []
 
-        print "Adding for:", label
+        print("Adding for:", label)
         for root, dirs, files in os.walk(path):
             for name in files:
                 if 'robot_model' in name and trial in root and 'hold' not in root and 'modified' not in name:
                     samples.append(root+"/"+name)
-                    print os.path.join(root, name),
+                    print(os.path.join(root, name), end=' ')
 
                 if 'true_maxima' in name and trial in root and 'hold' not in root:
                     true_maxes = np.loadtxt(os.path.join(root, name)).T
@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
 
         # Generate sample statistics
-        print "\n Computing for", label, "with", len(samples), "files."
+        print("\n Computing for", label, "with", len(samples), "files.")
         sdata, prop, propy, err_x, err_z, d_dist_x, d_dist_z, d_hx, d_hz = make_samples_df(samples, ['x', 'y', 'z'], max_loc = max_loc, max_val = max_val, xthresh = 1.5, ythresh = 3.0)
         all_sample_dfs.append(sdata)
         all_props.append(prop)

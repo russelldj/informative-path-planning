@@ -25,7 +25,7 @@ import obstacles as obslib
 import bag_utils as baglib
 
 
-print "User specified options: SEED, REWARD_FUNCTION, PATHSET, USE_COST, NONMYOPIC, GOAL_ONLY, TREE_TYPE, RUN_REAL"
+print("User specified options: SEED, REWARD_FUNCTION, PATHSET, USE_COST, NONMYOPIC, GOAL_ONLY, TREE_TYPE, RUN_REAL")
 # Allow selection of seed world to be consistent, and to run through reward functions
 SEED =  int(sys.argv[1])
 # SEED = 0 
@@ -71,8 +71,8 @@ if RUN_REAL_EXP:
     # Add subsampled data from a previous bagifle
     seed_bag = '/home/genevieve/mit-whoi/barbados/rosbag_15Jan_slicklizard/slicklizard_2019-01-15-20-22-16.bag'
     xobs, zobs = baglib.read_bagfile(seed_bag)
-    print xobs.shape
-    print zobs.shape
+    print(xobs.shape)
+    print(zobs.shape)
     # Create the GP model
     gp_world = gplib.GPModel(ranges, lengthscale = 4.0543111858072445, variance = 0.3215773006606948, noise = 0.0862445597387173)
     gp_world.add_data(xfull[::5], zfull[::5])

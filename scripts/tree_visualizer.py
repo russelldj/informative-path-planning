@@ -29,7 +29,7 @@ def get_trees(filepath):
 def extract_paths(tree):
     ''' Get the last element in a sequence to re-assemble the path'''
     leaves = []
-    for key, value in tree.items():
+    for key, value in list(tree.items()):
         temp = key.count('child')
         if temp >= 6:
             leaves.append(key)
@@ -80,7 +80,7 @@ def make_tree_graph(leaves):
 
 def plot_trees(trees, path):
     ''' Plot the networkx representation '''
-    for key, tree in trees.items():
+    for key, tree in list(trees.items()):
         paths = extract_paths(tree)
         graph, pos = make_tree_graph(paths)
         plt.figure()

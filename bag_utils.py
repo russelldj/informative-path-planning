@@ -14,7 +14,7 @@ def truncate_by_distance(xvals, dist_lim=250.0):
             continue
 
         dist += np.sqrt((pt[0] - last[0])**2 + (pt[1]-last[1])**2)
-        print dist
+        print(dist)
         last = pt
 
         if dist > dist_lim:
@@ -66,10 +66,10 @@ def read_fulldataset(home = [13.1916987, -59.6419202, 0.00000]):
 
     # Convert lists to ndarrays
     all_locations = np.array(all_locations).reshape((-1, 2)); 
-    print "Mean altitude:", np.mean(all_altitude)
+    print("Mean altitude:", np.mean(all_altitude))
     # all_altitude = np.array(all_altitude-np.mean(all_altitude)).reshape((-1, 1))
     all_altitude = np.array(all_altitude-np.mean(all_altitude))
-    print "Mean altitude:", np.mean(all_altitude)
+    print("Mean altitude:", np.mean(all_altitude))
 
     FILT_N = 5
     all_altitude = np.convolve(all_altitude, np.ones((FILT_N,))/FILT_N, mode='same').reshape((-1, 1))
@@ -82,8 +82,8 @@ def read_fulldataset(home = [13.1916987, -59.6419202, 0.00000]):
     max_val = np.max(all_altitude)
     max_loc = all_locations[np.argmax(all_altitude), :]
 
-    print "Max read in val:", max_val
-    print "Max read in loc:", max_loc
+    print("Max read in val:", max_val)
+    print("Max read in loc:", max_loc)
 
     ranges = (0., 50., 0., 50.)
 

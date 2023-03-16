@@ -29,7 +29,7 @@ def predict_max(xvals, zvals, ranges = [0.0, 10.0, 0.0, 10.0], LEN = 1.0, VAR = 
     # If no observations have been collected, return default value
     # if xvals is None or True: # TODO: remeber to change this!
     if xvals is None or True: # TODO: remeber to change this!
-        print "Skipping maxima prediction!"
+        print("Skipping maxima prediction!")
         return np.array([0., 0.]), 0.
 
     GP = gplib.GPModel(ranges = ranges, lengthscale = LEN, variance = VAR, noise = NOISE)
@@ -61,7 +61,7 @@ def predict_max(xvals, zvals, ranges = [0.0, 10.0, 0.0, 10.0], LEN = 1.0, VAR = 
 def star_max_dist(xvals, zvals, true_loc, true_val, PATH, ranges = [0.0, 10.0, 0.0, 10.0], LEN = 1.0, VAR = 100.0, NOISE = 0.5):
     # If no observations have been collected, return default value
     if xvals is None: #TODO: remember to change this
-        print "Skipping star analysis prediction!"
+        print("Skipping star analysis prediction!")
         return 0.0, 0.0, 0.0, 0.0
 
     GP = gplib.GPModel(ranges = ranges, lengthscale = LEN, variance = VAR, noise = NOISE)
@@ -267,31 +267,31 @@ def generate_stats(dfs, labels, params, end_time=149, fname='stats.txt'):
 def generate_histograms(dfs, props, labels, title, figname='', save_fig=False, ONLY_STATS = False):
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'b', 'g', 'r', 'c', 'm', 'y']
 
-    print '\n\n ------------------', title, '------------------'
-    print '---- Mean and STD for each proportion ---'
+    print('\n\n ------------------', title, '------------------')
+    print('---- Mean and STD for each proportion ---')
     for q,m in enumerate(props):
-        print labels[q] + ': ' + str(np.mean(m)) + ', ' + str(np.std(m)) 
-    print '---- Median and IQR for each proportion ---'
+        print(labels[q] + ': ' + str(np.mean(m)) + ', ' + str(np.std(m))) 
+    print('---- Median and IQR for each proportion ---')
     for q,m in enumerate(props):
-        print labels[q] + ': ' + str(np.median(m)) + ', ' + str(sp.stats.iqr(m))
-    print '---- MIN and MAX for each proportion ---'
+        print(labels[q] + ': ' + str(np.median(m)) + ', ' + str(sp.stats.iqr(m)))
+    print('---- MIN and MAX for each proportion ---')
     for q,m in enumerate(props):
-        print labels[q] + ': ' + str(np.min(m)) + ', ' + str(np.max(m))
+        print(labels[q] + ': ' + str(np.min(m)) + ', ' + str(np.max(m)))
 
     if ONLY_STATS == True:
         return
 
-    print '---- Sig Test, PLUMES v other ----'
+    print('---- Sig Test, PLUMES v other ----')
     for q,m in enumerate(props):
-        print labels[q] + ' v PLUMES: ' + str(stats.ttest_ind(props[0],m, equal_var=False))
+        print(labels[q] + ' v PLUMES: ' + str(stats.ttest_ind(props[0],m, equal_var=False)))
 
-    print '---- Convergence % ----'
+    print('---- Convergence % ----')
     for q,m in enumerate(props):
         count = 0
         for pro in m:
             if pro >= 0.10:
                 count += 1
-        print labels[q] + ': ' + str(float(count)/len(m)) 
+        print(labels[q] + ': ' + str(float(count)/len(m))) 
 
     fig, axes = plt.subplots(1, len(dfs), sharey = True)
     hist = [None]*len(dfs)
@@ -486,7 +486,7 @@ def truncate_by_distance(df, sample_df, max_loc, max_val, dist_lim=250.0, xthres
     # Predict maxima
     max_x, max_z = predict_max(xvals, zvals)
     err_x = (np.linalg.norm(max_x - np.array(max_loc)))
-    print "max val:", max_val
+    print("max val:", max_val)
     err_z = (np.linalg.norm(max_z - max_val[0]))
 
     # Predict star distribution 

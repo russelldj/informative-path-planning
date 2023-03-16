@@ -119,7 +119,7 @@ class GPModel(object):
         
         # Read pre-trained kernel parameters from file, if avaliable and no training data is provided
         if os.path.isfile(kernel_file):
-            print "Loading kernel parameters from file"
+            print("Loading kernel parameters from file")
             logger.info("Loading kernel parameters from file")
             self.kern[:] = np.load(kernel_file)
         else:
@@ -142,7 +142,7 @@ class GPModel(object):
             xvals = self.xvals
             zvals = self.zvals
 
-            print "Optimizing kernel parameters given data"
+            print("Optimizing kernel parameters given data")
             logger.info("Optimizing kernel parameters given data")
             # Initilaize a GP model (used only for optmizing kernel hyperparamters)
             self.m = GPy.models.GPRegression(np.array(xvals), np.array(zvals), self.kern)

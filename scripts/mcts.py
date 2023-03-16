@@ -43,7 +43,7 @@ class MCTS():
 		# tuple (pose, budget, number of times queried)
 		tree['root'] = (pose, budget, 0)
 		actions = self.get_action_set(pose)
-		for action, samples in actions.items():
+		for action, samples in list(actions.items()):
 			# tuple (samples, budget, reward, number of times queried)
 			tree['child '+ str(action)] = (samples, budget, 0, 0)
 		return tree
@@ -56,7 +56,7 @@ class MCTS():
 		#n number of time node n has been evaluated
 		#ucb = avg_r + c_p*np.sqrt(2*np.log(N)/n)
 		leaf_eval = {}
-		for node, samples in self.tree.items():
+		for node, samples in list(self.tree.items()):
 			if node == 'root':
 				pass
 			else:
@@ -65,7 +65,7 @@ class MCTS():
 
 	def rollout_policy(self, node, budget):
 		sequence = [node]
-		for i in xrange(self.horizon):
+		for i in range(self.horizon):
 			actions = self.get_action_set(self.tree[node][0][-1])
 			a = np.random.randint(0,self.frontier_size)
 			self.tree[node + ' child ' + str(a)] = (actions[a], budget, 0, 0)
@@ -94,7 +94,7 @@ class MCTS():
 	def get_best_child():
 		best = 0
 		best_child = None
-		for i in xrange(self.frontier_size):
+		for i in range(self.frontier_size):
 			r = tree['child '+ str(i)][2]
 			if r > best:
 				best = r

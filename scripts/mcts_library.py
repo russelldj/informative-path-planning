@@ -100,7 +100,7 @@ class MCTS(object):
             self.update_tree(reward, cost, sequence)
 
         time_end = time.time()
-        print "Rollouts completed in", str(time_end - time_start) +  "s", 
+        print("Rollouts completed in", str(time_end - time_start) +  "s", end=' ') 
 
         # get the best action to take with most promising futures, base best on whether to
         # consider cost
@@ -108,7 +108,7 @@ class MCTS(object):
         paths, dense_paths = self.path_generator.get_path_set(self.cp)
 
         #Document the information
-        print "Number of rollouts:", i, "\t Size of tree:", len(self.tree)
+        print("Number of rollouts:", i, "\t Size of tree:", len(self.tree))
         logger.info("Number of rollouts: {} \t Size of tree: {}".format(i, len(self.tree)))
         np.save('./figures/' + self.f_rew + '/tree_' + str(t) + '.npy', self.tree)
         return self.tree[best_sequence][0], self.tree[best_sequence][1], best_val, paths, all_vals, self.max_locs, self.max_val
@@ -122,7 +122,7 @@ class MCTS(object):
         # root of the tree is current location of the vehicle
         tree['root'] = (self.cp, 0) #(pose, number of queries)
         actions, dense_paths = self.path_generator.get_path_set(self.cp)
-        for action in actions.keys():
+        for action in list(actions.keys()):
              #(samples robot observes, path, cost, reward, number of times queried)
             tree['child '+str(action)] = (actions[action], dense_paths[action], 0, 0, 0)
         return tree
@@ -138,13 +138,13 @@ class MCTS(object):
         '''
         leaf_eval = {}
         actions, dense_paths = self.path_generator.get_path_set(self.cp)
-        for i, val in actions.items():
+        for i, val in list(actions.items()):
             node = 'child '+ str(i)
             if self.tree[node][4] == 0:
                 return node
             else:
                 leaf_eval[node] = self.tree[node][3] + self.c*np.sqrt(2*(np.log(self.tree['root'][1]))/self.tree[node][4])
-        return random.choice([key for key in leaf_eval.keys() if leaf_eval[key] == max(leaf_eval.values())])
+        return random.choice([key for key in list(leaf_eval.keys()) if leaf_eval[key] == max(leaf_eval.values())])
 
     def rollout_policy(self, node):
         '''
@@ -153,16 +153,16 @@ class MCTS(object):
         Output: sequence (list of names of nodes that make the sequence in the tree)
         '''
         sequence = [node] #include the child node
-        for i in xrange(self.rl):
+        for i in range(self.rl):
             actions, dense_paths = self.path_generator.get_path_set(self.tree[node][0][-1]) #plan from the last point in the sample
             #check that paths were generated; if not, roll back if possible
             try:
-                keys = actions.keys()
+                keys = list(actions.keys())
             except:
-                print 'No actions were viably generated; rolling back'
+                print('No actions were viably generated; rolling back')
                 sequence.remove(node)
                 if len(sequence) == 0:
-                    print "Empty sequence ", sequence, node
+                    print("Empty sequence ", sequence, node)
                     logger.warning("Bad Sequence")
             #select a random action
             try: 
@@ -254,7 +254,7 @@ class MCTS(object):
         best_child = None
         value = {}
         actions, dense_paths = self.path_generator.get_path_set(self.cp)
-        keys = actions.keys()
+        keys = list(actions.keys())
         for i in keys:
             try:
                 if self.use_cost == False:
@@ -309,7 +309,7 @@ class Node(object):
         self.children.append(child_node)
     
     def print_self(self):
-        print self.name
+        print(self.name)
 
 class Tree(object):
     def __init__(self, f_rew, f_aqu,  belief, pose, path_generator, t, depth, param, c):
@@ -445,12 +445,12 @@ class Tree(object):
             vals[child] = child.reward/float(child.nqueries) + self.c * np.sqrt((float(current_node.nqueries) ** e_d)/float(child.nqueries)) 
             #vals[child] = child.reward/float(child.nqueries) + self.c * np.sqrt(np.log(float(current_node.nqueries))/float(child.nqueries)) 
         # Return the max node, or a random node if the value is equal
-        return random.choice([key for key in vals.keys() if vals[key] == max(vals.values())])
+        return random.choice([key for key in list(vals.keys()) if vals[key] == max(vals.values())])
         
     def build_action_children(self, parent):
         actions, dense_paths = self.path_generator.get_path_set(parent.pose)
         if len(actions) == 0:
-            print "No actions!", 
+            print("No actions!", end=' ') 
             return
         
         #print "Creating children for:", parent.name
@@ -465,7 +465,7 @@ class Tree(object):
 
     def print_tree(self):
         counter = self.print_helper(self.root)
-        print "# nodes in tree:", counter
+        print("# nodes in tree:", counter)
 
     def print_helper(self, cur_node):
         if cur_node.children is None:
@@ -494,7 +494,7 @@ class BeliefTree(Tree):
         pose = current_node.pose
         while cur_depth <= self.max_depth:
             actions, dense_paths = self.path_generator.get_path_set(pose)
-            keys = actions.keys()
+            keys = list(actions.keys())
             # No viable trajectories from current location
             if len(actions) <= 1:
                 return reward
@@ -612,7 +612,7 @@ class BeliefTree(Tree):
                 return child, False
             vals[child] = child.reward/float(child.nqueries) + self.c * np.sqrt(2.0*np.log(float(current_node.nqueries))/float(child.nqueries)) 
         # Return the max node, or a random node if the value is equal
-        return random.choice([key for key in vals.keys() if vals[key] == max(vals.values())]), True
+        return random.choice([key for key in list(vals.keys()) if vals[key] == max(vals.values())]), True
         
 
 
@@ -641,7 +641,7 @@ class cMCTS(MCTS):
                 # self.c = 5.0
         else:
             self.c = 1.0
-        print "Setting c to :", self.c
+        print("Setting c to :", self.c)
 
     def choose_trajectory(self, t):
         #Main function loop which makes the tree and selects the best child
@@ -676,11 +676,11 @@ class cMCTS(MCTS):
             gp = copy.copy(self.GP)
             self.tree.get_next_leaf(gp)
         time_end = time.time()
-        print "Rollouts completed in", str(time_end - time_start) +  "s"
-        print "Number of rollouts:", i
+        print("Rollouts completed in", str(time_end - time_start) +  "s")
+        print("Number of rollouts:", i)
         self.tree.print_tree()
 
-        print [(node.nqueries, node.reward/node.nqueries) for node in self.tree.root.children]
+        print([(node.nqueries, node.reward/node.nqueries) for node in self.tree.root.children])
 
         #best_child = self.tree.root.children[np.argmax([node.nqueries for node in self.tree.root.children])]
         best_child = random.choice([node for node in self.tree.root.children if node.nqueries == max([n.nqueries for n in self.tree.root.children])])

@@ -68,7 +68,7 @@ class MCTS_Reachable:
         elif f_rew == 'exp_improve':
             self.aquisition_function = il.exp_improvement
         else:
-            print 'ERROR!!!!'
+            print('ERROR!!!!')
         self.f_rew = f_rew
         self.t = time
         self.turning_radius = turning_radius
@@ -137,11 +137,11 @@ class MCTS_Reachable:
 
         # get the best action to take with most promising futures
         best_sequence, best_val, all_vals = self.get_best_child()
-        print "Number of rollouts:", i, "\t Size of tree:", len(self.tree)
+        print("Number of rollouts:", i, "\t Size of tree:", len(self.tree))
         logger.info("Number of rollouts: {} \t Size of tree: {}".format(i, len(self.tree)))
 
         paths = {}
-        for i in xrange(len(self.goals)):
+        for i in range(len(self.goals)):
             paths[i] = self.take_step(self.cp, self.goals[i])
         return self.tree[best_sequence][0], best_val, paths, all_vals, self.max_locs, self.max_val
 
@@ -188,7 +188,7 @@ class MCTS_Reachable:
 
         sequence = [node] #include the child node
         #TODO use the cost metric to signal action termination, for now using horizon
-        for i in xrange(self.rl):
+        for i in range(self.rl):
             actions = self.goals #self.path_generator.get_path_set(self.tree[node][0][-1]) #plan from the last point in the sample
             try:
                 a = np.random.randint(0,len(actions)-1) #choose a random path
@@ -255,7 +255,7 @@ class MCTS_Reachable:
         best = -float('inf')
         best_child = None
         value = {}
-        for i in xrange(len(self.goals)):
+        for i in range(len(self.goals)):
             try:
                 r = self.tree['child '+ str(i)][2]
                 value[i] = r
@@ -439,8 +439,8 @@ class Reachable_Robot():
         '''
         self.trajectory = []
 
-        for t in xrange(T):
-            print "[", t, "] Current Location:  ", self.loc
+        for t in range(T):
+            print("[", t, "] Current Location:  ", self.loc)
             logger.info("[{}] Current Location: {}".format(t, self.loc))
             if self.use_mcts == False:
                 best_location, best_val, all_paths, all_values, max_locs = self.choose_destination(t = t)
@@ -458,7 +458,7 @@ class Reachable_Robot():
 
             # Given this choice, update the evaluation metrics 
             pred_loc, pred_val = self.predict_max()
-            print "Current predicted max and value: \t", pred_loc, "\t", pred_val
+            print("Current predicted max and value: \t", pred_loc, "\t", pred_val)
             logger.info("Current predicted max and value: {} \t {}".format(pred_loc, pred_val))
             try:
                 self.eval.update_metrics(len(self.trajectory), self.GP, all_paths, sampling_path, value = best_val, max_loc = pred_loc, max_val = pred_val, params = [self.current_max, self.current_max_loc, self.max_val, self.max_locs]) 
@@ -469,7 +469,7 @@ class Reachable_Robot():
 
 
             # Given this choice, take a step in the right direction, obeying to the dynamics of the vehicle
-            print sampling_path
+            print(sampling_path)
             if len(sampling_path) == 0:
                 break
             data = np.array(sampling_path)

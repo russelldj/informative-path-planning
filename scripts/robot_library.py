@@ -177,7 +177,7 @@ class Robot(object):
             
         paths, true_paths = self.path_generator.get_path_set(self.loc)
 
-        for path, points in paths.items():
+        for path, points in list(paths.items()):
             # set params
             if self.f_rew == 'mes' or self.f_rew == 'maxs-mes':
                 param = (self.max_val, self.max_locs, self.target)
@@ -207,7 +207,7 @@ class Robot(object):
                 reward = self.aquisition_function(time = t, xvals = poi, robot_model = self.GP, param = param)
                 value[path] = reward/cost   
         try:
-            best_key = np.random.choice([key for key in value.keys() if value[key] == max(value.values())])
+            best_key = np.random.choice([key for key in list(value.keys()) if value[key] == max(value.values())])
             return paths[best_key], true_paths[best_key], value[best_key], paths, value, self.max_locs
         except:
             return None
@@ -249,14 +249,14 @@ class Robot(object):
         self.trajectory = []
         self.dist = 0
         
-        for t in xrange(T):
+        for t in range(T):
             # Select the best trajectory according to the robot's aquisition function
-            print "[", t, "] Current Location:  ", self.loc
+            print("[", t, "] Current Location:  ", self.loc)
             logger.info("[{}] Current Location: {}".format(t, self.loc))
 
             # Let's figure out where the best point is in our world
             pred_loc, pred_val = self.predict_max()
-            print "Current predicted max and value: \t", pred_loc, "\t", pred_val
+            print("Current predicted max and value: \t", pred_loc, "\t", pred_val)
             logger.info("Current predicted max and value: {} \t {}".format(pred_loc, pred_val))
 
 
@@ -295,7 +295,7 @@ class Robot(object):
             self.trajectory.append(best_path)
             
             if self.create_animation:
-                print 'Creating Visualization'
+                print('Creating Visualization')
                 self.visualize_trajectory(screen = False, filename = t, best_path = sampling_path, 
                         maxes = self.max_locs, all_paths = all_paths, all_vals = all_values)            
 
@@ -345,13 +345,13 @@ class Robot(object):
         # If available, plot the current set of options available to robot, colored
         # by their value (red: low, yellow: high)
         if all_paths is not None:
-            all_vals = [x for x in all_vals.values()]   
+            all_vals = [x for x in list(all_vals.values())]   
             path_color = iter(plt.cm.autumn(np.linspace(0, max(all_vals),len(all_vals))/ max(all_vals)))        
             path_order = np.argsort(all_vals)
             
             for index in path_order:
                 c = next(path_color)                
-                points = all_paths[all_paths.keys()[index]]
+                points = all_paths[list(all_paths.keys())[index]]
                 f = np.array(points)
                 plt.plot(f[:,0], f[:,1], c = c)
                

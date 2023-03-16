@@ -34,7 +34,7 @@ def make_df(file_names, sample_names, max_vals, column_names):
         data[column_names[-1]] = pd.Series(np.array(max_info_value), index = data.index)
         data.columns = column_names
         data[column_names].T.to_csv(d, sep=" ", header = False, index = False, index_label = False)
-        print "Adding max_value_info to ", d
+        print("Adding max_value_info to ", d)
 
     elif data.shape[1] > len(column_names): 
         data = pd.read_table(d, delimiter = " ", header=None, skipfooter = 1) 
@@ -54,7 +54,7 @@ def make_df(file_names, sample_names, max_vals, column_names):
 
         # If info value hasn't been computed
         if temp_data.shape[1] < len(column_names): 
-            print "Adding max_value_info to", m 
+            print("Adding max_value_info to", m) 
             max_info_value = playback(m, m_samp_file, m_max_vals, column_names[0:-1])
             temp_data[column_names[-1]] = pd.Series(np.array(max_info_value), index = temp_data.index)
             temp_data.columns = column_names
@@ -82,7 +82,7 @@ def make_samples_df(file_names, column_names, max_loc, thresh=1.5):
     sdata.columns = column_names
     sdata.loc[:, 'Distance'] = sdata.apply(lambda x: np.sqrt((x['x']-max_loc[0][0])**2+(x['y']-max_loc[0][1])**2),axis=1)
     prop.append(float(len(sdata[sdata.Distance < thresh]))/len(sdata))
-    print len(file_names), len(max_loc)
+    print(len(file_names), len(max_loc))
     for i,m in enumerate(file_names[1:]):
         temp_data = pd.read_table(m, delimiter = " ", header=None)
         temp_data = temp_data.T
@@ -107,13 +107,13 @@ def print_stats(meandf, mesdf, eidf, columns, end_time=174.0, fname='stats.txt')
         f.write(str(e) + '\n')
         f.write('MEAN:    ' + str(mean_end[e].mean()) + ', ' + str(mean_end[e].std()) + '\n')
         f.write('MES :    ' + str(mes_end[e].mean()) + ', '  + str(mes_end[e].std()) + '\n')
-        print '-------------'
-        print str(e)
-        print 'MEAN:    ' + str(mean_end[e].mean()) + ', ' + str(mean_end[e].std())
-        print 'MES :    ' + str(mes_end[e].mean()) + ', '  + str(mes_end[e].std())
+        print('-------------')
+        print(str(e))
+        print('MEAN:    ' + str(mean_end[e].mean()) + ', ' + str(mean_end[e].std()))
+        print('MES :    ' + str(mes_end[e].mean()) + ', '  + str(mes_end[e].std()))
         if eidf is not None:
             f.write('EI  :    ' + str(ei_end[e].mean()) + ', ' + str(ei_end[e].std()))
-            print 'EI  :    ' + str(ei_end[e].mean()) + ', ' + str(ei_end[e].std() + '\n') 
+            print('EI  :    ' + str(ei_end[e].mean()) + ', ' + str(ei_end[e].std() + '\n')) 
     f.close()
 
 
@@ -307,9 +307,9 @@ def playback(playback_locs, playback_samples, max_val, column_names):
 
 ######### MAIN LOOP ###########
 if __name__ == '__main__':
-    seed_numbers = range(5000, 10000, 100)
+    seed_numbers = list(range(5000, 10000, 100))
     seeds = ['seed'+ str(x) + '-' for x in seed_numbers]
-    print seeds
+    print(seeds)
 
     #fileparams = 'pathsetfully_reachable_goal-costTrue-nonmyopicFalse-goalFalse'
     #fileparams = 'pathsetdubins-costFalse-nonmyopicTrue-goalFalse_BUGTRAP'
@@ -387,12 +387,12 @@ if __name__ == '__main__':
     mes_sdata, mes_prop = make_samples_df(mes_samples, ['x', 'y', 'a'], max_loc, 1.5)
     # ei_sdata, ei_prop = make_samples_df(ei_samples, ['x', 'y', 'a'], max_loc, 1.5)
 
-    print 'Mean value of sample proportions: ' 
+    print('Mean value of sample proportions: ') 
     # print [sum(m)/len(m) for m in (mean_prop, mes_prop, ei_prop)]
-    print [sum(m)/len(m) for m in (mean_prop, mes_prop)]
-    print 'STD value of sample proportions: '
+    print([sum(m)/len(m) for m in (mean_prop, mes_prop)])
+    print('STD value of sample proportions: ')
     # print [np.std(m) for m in (mean_prop, mes_prop, ei_prop)]
-    print [np.std(m) for m in (mean_prop, mes_prop)]
+    print([np.std(m) for m in (mean_prop, mes_prop)])
 
     # make_histograms(mean_sdata, mes_sdata, ei_sdata)
     make_histograms(mean_sdata, mes_sdata, None, figname=file_start)

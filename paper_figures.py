@@ -19,9 +19,9 @@ from analysis_utils import *
 ######### MAIN LOOP ###########
 if __name__ == '__main__':
     # seed_numbers = range(5100, 10000, 100)
-    seed_numbers = range(5100, 5500, 100)
+    seed_numbers = list(range(5100, 5500, 100))
     # seed_numbers.remove(5300)
-    print len(seed_numbers)
+    print(len(seed_numbers))
     # seed_numbers = [0, 100, 200, 400, 500, 700, 800, 900, 1000, 1200, 1300, 1400, 1600, 1700, 1800, 1900]
     seeds = ['seed'+ str(x) + '-' for x in seed_numbers]
 
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         # p_mean_samples = []
         # p_mes_samples = []
 
-        print "Adding for:", param, label, trial
+        print("Adding for:", param, label, trial)
         for root, dirs, files in os.walk(path):
             for name in files:
                 if 'metrics' in name and 'star' not in name and trial in root and param in root and SUFFIX in root:
@@ -96,12 +96,12 @@ if __name__ == '__main__':
                         for s in seed_numbers:
                             if str(s) in root:
                                 samples.append(root+"/"+name)
-                                print root+'/'+name
+                                print(root+'/'+name)
                     else:
                         for s in seeds:
                             if s in root:
                                 samples.append(root+"/"+name)
-                                print root+'/'+name
+                                print(root+'/'+name)
 
                 # if 'log' in name and (('mean' in root and 'UCB-MCTS' in param) or ('mes' in root and 'COMPOSIT' in param)) and param in root and 'FREE' in root:
                 if 'log' in name and 'mes' in trial and param in root and SUFFIX in root:
